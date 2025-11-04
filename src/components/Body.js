@@ -3,6 +3,7 @@ import { use, useEffect, useState } from "react";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router";
 import { CDN_URL } from "../utilis/constants";
+import useOnlineStatus from "../utilis/useOnlineStatus";
 
 
 const styleCard = {
@@ -62,6 +63,11 @@ const Body = () => {
 
     setFilteredRestaurants(restaurants);
    }
+  const onlineStatus = useOnlineStatus();
+
+  if(onlineStatus === false) {
+    return <h1>🔴 You are offline! Please check your internet connection.</h1>
+  }
 
   if(listOfRestaurants.length === 0) {
     return <Shimmer />

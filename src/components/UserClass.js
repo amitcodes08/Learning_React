@@ -2,29 +2,35 @@ class UserClass extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          
+          userInfo: {
+            name: "Dummy Name",
+            location: "Dummy Location"
+          }
+          }
         }
-    }
 
    async componentDidMount() {
         console.log("UserClass component mounted");
+        const data = await fetch("https://api.github.com/users/amitcodes08");
+        const user = await data.json();
+        console.log(user);
 
+        this.setState({
+            userInfo: user
+        });
     }
     
   render() {
+    const {name, location} = this.state.userInfo;
     return (
       <div>
-         <button onClick={() => {
-            // Never do this.state.count = 1
-            this.setState({
-                count: this.state.count + 1
-            });
-         }}>Count - {this.state.count}</button>
         <h2>User Component</h2>
-        <p>This is a user component rendered from a class-based component.</p>
+        <p>Name: {name}</p>
+        <p>Location: {location}</p>
       </div>
-    );
-  }
+    )
 }
+}
+
 
 export default UserClass;

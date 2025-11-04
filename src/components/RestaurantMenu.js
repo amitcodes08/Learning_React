@@ -2,11 +2,13 @@ import { useEffect } from "react";
 import Shimmer from "./Shimmer";
 import { useState } from "react";
 import { useParams } from "react-router";
+import useRestaurantMenu from "../utilis/useRestaurantMenu";
 
 const RestaurantMenu = () => {
-    const [resInfo, setResInfo] = useState(null);
     const {resId} = useParams();
-
+    const resInfo = useRestaurantMenu(resId);
+    
+    
     // useEffect(() => {
     //     // Fetch restaurant menu data using the restaurant ID from the URL
     //     fetchMenu();
