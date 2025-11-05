@@ -1,12 +1,15 @@
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import Shimmer from "./Shimmer";
 import { useState } from "react";
 import { useParams } from "react-router";
 import useRestaurantMenu from "../utilis/useRestaurantMenu";
+import RestaurantCategory from "./RestaurantCategory";
 
 const RestaurantMenu = () => {
     const {resId} = useParams();
     const resInfo = useRestaurantMenu(resId);
+
+    const [showIndex, setShowIndex] = useState(0);
     
     
     // useEffect(() => {
@@ -24,19 +27,30 @@ const RestaurantMenu = () => {
     //     setResInfo(json.data);
     // }
 
+    const categories = resInfo?.cards[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
+        (c) => c.card?.card?.["@type"] === "type.googleapis.com/swiggy.presentation.food.v2.ItemCategory"
+    );
+
+    // console.log(categories);
+
     if(resInfo === null) {
         return <Shimmer />;
     }
 
     return (
-        <div className="Menu">
-            <h1>{resInfo.name}</h1>
-            <h2>{resInfo.cuisine}</h2>
-            <h3>{resInfo.area}</h3>
-            <h3>{resInfo.city}</h3>
-            <h3>{resInfo.avgRating} stars</h3>
-            <h3>{resInfo.costForTwoMsg}</h3>
-        </div>
+      <div className="text-center">
+        <h1 className="font-bold my-6 text-2xl">{resInfo.name}</h1>
+        <h2 className="text-lg">{resInfo.cuisine}</h2>
+        {/* */}
+        {categories.map((category, index) => (
+          <RestaurantCategory
+            key={category.card.card.title}
+            category={category.card.card}
+            showItems={index === setShowIndex ? true : false}
+            setShowIndex={() => setShowIndex(index)}
+          />
+        ))}
+      </div>
     );
 };
 

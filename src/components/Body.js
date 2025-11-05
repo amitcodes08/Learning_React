@@ -6,15 +6,15 @@ import { CDN_URL } from "../utilis/constants";
 import useOnlineStatus from "../utilis/useOnlineStatus";
 
 
-const styleCard = {
-    backgroundColor: "#f0f0f0",
-    padding: "20px",
-    borderRadius: "10px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    textAlign: "center",
-    width: "200px",
-    margin: "10px"
-};
+// const styleCard = {
+//     backgroundColor: "#f0f0f0",
+//     padding: "20px",
+//     borderRadius: "10px",
+//     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+//     textAlign: "center",
+//     width: "200px",
+//     margin: "10px"
+// };
 
 const RestaurantCard = (props) => {
   console.log("Props:", props);
@@ -22,19 +22,40 @@ const RestaurantCard = (props) => {
 
   if (resData) {
     return (
-      <div className="restaurant-card" style={styleCard}>
+      <div className="w-60 h-80 p-4 m-4 bg-pink-50 rounded-lg hover:shadow-lg flex flex-col overflow-hidden justify-between">
         <img
-          className="restaurant-logo"
+          className="rounded-md w-full h-40 object-cover mb-2"
           src={`${CDN_URL}${resData?.info?.cloudinaryImageId}`}
-        ></img>
-        <h3>{resData?.info?.name}</h3>
-        <h4>{resData?.info?.cuisines?.join(", ")}</h4>
-        <h4>{resData?.info?.avgRating}</h4>
+          alt={resData?.info?.name}
+        />
+        <div className="flex-1">
+          <h3 className="font-semibold text-lg truncate">{resData?.info?.name}</h3>
+          <h4 className="text-sm text-gray-600 truncate">{resData?.info?.cuisines?.join(", ")}</h4>
+        </div>
+        <div className="mt-2">
+          <span className="inline-block bg-green-500 text-white text-xs px-2 py-1 rounded">
+            {resData?.info?.avgRating ?? "N/A"}
+          </span>
+        </div>
       </div>
     );
   }
 }
 
+// Higher Order Component
+
+const withPromotedLabel = (RestaurantCard) => {
+  return (props) => {
+    return (
+      <div>
+        <div className="absolute bg-yellow-300 text-xs px-2 py-1 rounded top-2 right-2 z-10">
+          Promoted
+        </div>
+        <RestaurantCard {...props} />
+      </div>
+    );
+  };
+}
 
 
 const Body = () => {
@@ -45,6 +66,8 @@ const Body = () => {
      useState(restaurantList);
 
    const [searchText, setSearchText] = useState("");
+
+   const PromotedRestaurantCard = withPromotedLabel(RestaurantCard);
 
   // useEffect will be called after body renders
    useEffect(() => {
@@ -75,10 +98,10 @@ const Body = () => {
 
   return (
     <div className="body">
-      <div className="search">
-        <div className="search-box">
-          <input type="text" placeholder="Search..." value={searchText} onChange={(e) => setSearchText(e.target.value)} />
-          <button onClick={() => {
+      <div className="flex justify-center m-4">
+        <div className="">
+          <input className="border border-black p-2 m-2 rounded-lg" type="text" placeholder="Search..." value={searchText} onChange={(e) => setSearchText(e.target.value)} />
+          <button className="bg-blue-500 text-white p-2 m-2 rounded-lg" onClick={() => {
             const filteredRestaurants = listOfRestaurants.filter((res) =>
               res?.info?.name.toLowerCase().includes(searchText.toLowerCase())
             );
@@ -87,7 +110,7 @@ const Body = () => {
         </div>
 
         <button
-          className="filter_btn"
+          className="bg-green-500 text-white p-2 m-2 rounded"
           onClick={() => {
             const filteredList = listOfRestaurants.filter(
               (res) => res?.info?.avgRating > 4.0
@@ -99,10 +122,12 @@ const Body = () => {
         </button>
       </div>
 
-      <div className="res-container">
+      <div className="flex flex-wrap justify-center">
         {filteredRestaurants.map((resObj) => (
           <Link to={`/restaurant/${resObj?.info?.id}`} key={resObj?.info?.id}>
-            <RestaurantCard resData={resObj} />
+          {resObj.info.promoted ? 
+          <PromotedRestaurantCard resData={resObj} /> :
+            <RestaurantCard resData={resObj} />}
           </Link>
         ))}
       </div>
@@ -111,3 +136,4 @@ const Body = () => {
 };
 
 export default Body;
+export { RestaurantCard };
