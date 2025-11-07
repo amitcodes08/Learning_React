@@ -1,3 +1,6 @@
+import UserContext from "./UserContext";
+import { useContext } from "react";
+
 class UserClass extends React.Component {
     constructor(props) {
         super(props);
@@ -24,6 +27,12 @@ class UserClass extends React.Component {
     const {name, location} = this.state.userInfo;
     return (
       <div>
+        <div>
+        LoggedIn User
+        <UserContext.Consumer>
+          {({ loggedInUser }) => <span>{loggedInUser}</span>}
+        </UserContext.Consumer>
+        </div>
         <h2>User Component</h2>
         <p>Name: {name}</p>
         <p>Location: {location}</p>

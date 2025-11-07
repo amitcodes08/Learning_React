@@ -1,9 +1,10 @@
 import restaurantList from "../utilis/mockData";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useContext } from "react";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router";
 import { CDN_URL } from "../utilis/constants";
 import useOnlineStatus from "../utilis/useOnlineStatus";
+import UserContext from "./UserContext";
 
 
 // const styleCard = {
@@ -59,13 +60,15 @@ const withPromotedLabel = (RestaurantCard) => {
 
 
 const Body = () => {
+
+  const { loggedInUser, setUserName } = useContext(UserContext);
   
   // State Variable to hold list of restaurants- Super Powerful Variable
    const [listOfRestaurants, setListOfRestaurants] = useState([]);
    const [filteredRestaurants, setFilteredRestaurants] =
      useState(restaurantList);
 
-   const [searchText, setSearchText] = useState("");
+    const [searchText, setSearchText] = useState("");
 
    const PromotedRestaurantCard = withPromotedLabel(RestaurantCard);
 
@@ -100,13 +103,26 @@ const Body = () => {
     <div className="body">
       <div className="flex justify-center m-4">
         <div className="">
-          <input className="border border-black p-2 m-2 rounded-lg" type="text" placeholder="Search..." value={searchText} onChange={(e) => setSearchText(e.target.value)} />
-          <button className="bg-blue-500 text-white p-2 m-2 rounded-lg" onClick={() => {
-            const filteredRestaurants = listOfRestaurants.filter((res) =>
-              res?.info?.name.toLowerCase().includes(searchText.toLowerCase())
-            );
-            setFilteredRestaurants(filteredRestaurants);
-          }}>Search</button>
+          <input
+            className="border border-black p-2 m-2 rounded-lg"
+            type="text"
+            placeholder="Search..."
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
+          />
+          <button
+            className="bg-blue-500 text-white p-2 m-2 rounded-lg"
+            onClick={() => {
+              const filteredRestaurants = listOfRestaurants.filter((res) =>
+                res?.info?.name.toLowerCase().includes(searchText.toLowerCase())
+              );
+              setFilteredRestaurants(filteredRestaurants);
+            }}
+          >
+            Search
+          </button>
         </div>
 
         <button
@@ -122,12 +138,25 @@ const Body = () => {
         </button>
       </div>
 
+      <div>
+        <label>UserName</label>
+        <input
+          value={loggedInUser || ""}
+          onChange={(e) => {
+            setUserName(e.target.value);
+          }}
+          className="border border-black p-2 m-2 rounded-lg"
+        />
+      </div>
+
       <div className="flex flex-wrap justify-center">
         {filteredRestaurants.map((resObj) => (
           <Link to={`/restaurant/${resObj?.info?.id}`} key={resObj?.info?.id}>
-          {resObj.info.promoted ? 
-          <PromotedRestaurantCard resData={resObj} /> :
-            <RestaurantCard resData={resObj} />}
+            {resObj.info.promoted ? (
+              <PromotedRestaurantCard resData={resObj} />
+            ) : (
+              <RestaurantCard resData={resObj} />
+            )}
           </Link>
         ))}
       </div>
