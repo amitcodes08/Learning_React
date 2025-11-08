@@ -12,7 +12,7 @@ const RestaurantCategory = ({ category, showItems, setShowIndex }) => {
     }
 
   return (
-    <div className="category">
+    <div className="category" onClick={handleClick}>
     <div className="flex items-center justify-center">
         <span className="font-bold text-xl m-4">{category.title}</span>
         <span className="text-sm m-4">⬇️</span>
